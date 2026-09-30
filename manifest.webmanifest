@@ -1,7 +1,7 @@
 {
   "name": "ChainPocket Mobile DApp",
   "short_name": "ChainPocket",
-  "description": "手机优先的钱包连接、签名与转账 DApp",
+  "description": "A mobile-first DApp for wallet connections, signatures, and native token transfers",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0b0e0d",

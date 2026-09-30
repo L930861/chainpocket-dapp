@@ -12,11 +12,11 @@ const CHAINS = {
 };
 
 const SWITCHABLE_CHAINS = [
-  { id: "0xaa36a7", name: "Sepolia", type: "测试网" },
-  { id: "0x14a34", name: "Base Sepolia", type: "测试网" },
-  { id: "0x1", name: "Ethereum", type: "主网" },
-  { id: "0x2105", name: "Base", type: "主网" },
-  { id: "0x89", name: "Polygon", type: "主网" },
+  { id: "0xaa36a7", name: "Sepolia", type: "Testnet" },
+  { id: "0x14a34", name: "Base Sepolia", type: "Testnet" },
+  { id: "0x1", name: "Ethereum", type: "Mainnet" },
+  { id: "0x2105", name: "Base", type: "Mainnet" },
+  { id: "0x89", name: "Polygon", type: "Mainnet" },
 ];
 
 const state = { account: null, chainId: null, pendingTransfer: null };
@@ -43,10 +43,10 @@ function formatBalance(hexWei) {
 }
 
 function toWeiHex(amount) {
-  if (!/^\d+(\.\d{1,18})?$/.test(amount)) throw new Error("请输入有效的代币数量");
+  if (!/^\d+(\.\d{1,18})?$/.test(amount)) throw new Error("Enter a valid token amount");
   const [whole, fraction = ""] = amount.split(".");
   const wei = BigInt(whole) * 10n ** 18n + BigInt(fraction.padEnd(18, "0"));
-  if (wei <= 0n) throw new Error("发送数量必须大于 0");
+  if (wei <= 0n) throw new Error("The amount must be greater than 0");
   return `0x${wei.toString(16)}`;
 }
 
@@ -63,9 +63,9 @@ function showToast(message, isError = false) {
 }
 
 function humanizeError(error) {
-  if (error?.code === 4001) return "你已取消钱包请求";
-  if (error?.code === -32002) return "钱包中已有待处理请求";
-  return error?.shortMessage || error?.message?.replace(/^MetaMask - RPC Error:\s*/, "") || "操作未完成，请重试";
+  if (error?.code === 4001) return "You cancelled the wallet request";
+  if (error?.code === -32002) return "A wallet request is already pending";
+  return error?.shortMessage || error?.message?.replace(/^MetaMask - RPC Error:\s*/, "") || "The action could not be completed. Try again.";
 }
 
 async function refreshWallet() {
@@ -89,15 +89,15 @@ async function refreshWallet() {
 function setConnected(account) {
   state.account = account;
   const connected = Boolean(account);
-  ui.connectButton.textContent = connected ? shortAddress(account) : "连接钱包";
-  ui.addressLabel.textContent = connected ? shortAddress(account) : "连接钱包后显示地址";
-  ui.walletState.textContent = connected ? "已连接" : "离线";
+  ui.connectButton.textContent = connected ? shortAddress(account) : "Connect wallet";
+  ui.addressLabel.textContent = connected ? shortAddress(account) : "Connect to reveal your address";
+  ui.walletState.textContent = connected ? "Connected" : "Offline";
   ui.walletState.classList.toggle("online", connected);
   ui.statusDot.classList.toggle("online", connected);
   [ui.networkButton, ui.copyAddressButton, ui.signButton, ui.sendButton, ui.signTabButton, ui.sendTabButton].forEach((element) => { element.disabled = !connected; });
   if (connected) refreshWallet();
   else {
-    ui.networkLabel.textContent = "未连接";
+    ui.networkLabel.textContent = "Not connected";
     ui.balanceValue.textContent = "0.0000";
   }
 }
@@ -105,15 +105,15 @@ function setConnected(account) {
 async function connectWallet() {
   if (!ethereum) {
     ui.walletBrowserLink.classList.remove("hidden");
-    showToast("未检测到钱包，请在钱包 App 的浏览器中打开", true);
+    showToast("No wallet detected. Open this site in your wallet app browser.", true);
     return;
   }
   ui.connectButton.disabled = true;
-  ui.connectButton.textContent = "等待钱包授权...";
+  ui.connectButton.textContent = "Waiting for approval...";
   try {
     const accounts = await ethereum.request({ method: "eth_requestAccounts" });
     setConnected(accounts[0]);
-    showToast("钱包连接成功");
+    showToast("Wallet connected");
   } catch (error) {
     setConnected(null);
     showToast(humanizeError(error), true);
@@ -135,19 +135,19 @@ function activateTab(tabName, shouldScroll = false) {
 
 async function signMessage() {
   const message = $("messageInput").value.trim();
-  if (!message) return showToast("请输入待签名消息", true);
+  if (!message) return showToast("Enter a message to sign", true);
   try {
     ui.signButton.disabled = true;
-    ui.signButton.textContent = "等待钱包确认...";
+    ui.signButton.textContent = "Waiting for wallet...";
     const signature = await ethereum.request({ method: "personal_sign", params: [toHexUtf8(message), state.account] });
     $("signatureValue").textContent = signature;
     $("signatureResult").classList.remove("hidden");
-    showToast("消息签名完成");
+    showToast("Message signed");
   } catch (error) {
     showToast(humanizeError(error), true);
   } finally {
     ui.signButton.disabled = false;
-    ui.signButton.textContent = "请求钱包签名";
+    ui.signButton.textContent = "Request signature";
   }
 }
 
@@ -156,9 +156,9 @@ async function switchNetwork(chainId) {
     await ethereum.request({ method: "wallet_switchEthereumChain", params: [{ chainId }] });
     ui.networkDialog.close();
     await refreshWallet();
-    showToast("网络已切换");
+    showToast("Network switched");
   } catch (error) {
-    showToast(error?.code === 4902 ? "钱包尚未添加该网络" : humanizeError(error), true);
+    showToast(error?.code === 4902 ? "This network has not been added to your wallet" : humanizeError(error), true);
   }
 }
 
@@ -166,7 +166,7 @@ function prepareTransfer(event) {
   event.preventDefault();
   const recipient = $("recipientInput").value.trim();
   const amount = $("amountInput").value.trim();
-  if (!/^0x[a-fA-F0-9]{40}$/.test(recipient)) return showToast("请输入有效的 EVM 接收地址", true);
+  if (!/^0x[a-fA-F0-9]{40}$/.test(recipient)) return showToast("Enter a valid EVM recipient address", true);
   try { toWeiHex(amount); } catch (error) { return showToast(error.message, true); }
   state.pendingTransfer = { recipient, amount };
   $("confirmRecipient").textContent = shortAddress(recipient);
@@ -180,7 +180,7 @@ async function sendTransfer() {
   const { recipient, amount } = state.pendingTransfer;
   try {
     $("confirmSendButton").disabled = true;
-    $("confirmSendButton").textContent = "等待钱包确认...";
+    $("confirmSendButton").textContent = "Waiting for wallet...";
     const txHash = await ethereum.request({
       method: "eth_sendTransaction",
       params: [{ from: state.account, to: recipient, value: toWeiHex(amount) }],
@@ -188,13 +188,13 @@ async function sendTransfer() {
     ui.confirmDialog.close();
     $("recipientInput").value = "";
     $("amountInput").value = "";
-    showToast(`交易已提交 ${shortAddress(txHash)}`);
+    showToast(`Transaction submitted ${shortAddress(txHash)}`);
     setTimeout(refreshWallet, 1500);
   } catch (error) {
     showToast(humanizeError(error), true);
   } finally {
     $("confirmSendButton").disabled = false;
-    $("confirmSendButton").textContent = "在钱包中确认";
+    $("confirmSendButton").textContent = "Confirm in wallet";
   }
 }
 
@@ -233,7 +233,7 @@ function init() {
   $("confirmSendButton").addEventListener("click", sendTransfer);
   ui.copyAddressButton.addEventListener("click", async () => {
     await navigator.clipboard.writeText(state.account);
-    showToast("钱包地址已复制");
+    showToast("Wallet address copied");
   });
 
   if (ethereum) {
