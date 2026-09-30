@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0b0e0d" />
+    <meta name="description" content="ChainPocket 是一个手机优先的钱包连接、签名与链上转账 DApp。" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="stylesheet" href="/styles.css" />
+    <title>ChainPocket | Mobile DApp</title>
+  </head>
+  <body>
+    <div class="ambient ambient-one" aria-hidden="true"></div>
+    <div class="ambient ambient-two" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="ChainPocket 首页">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span>ChainPocket</span>
+      </a>
+      <button class="network-button" id="networkButton" type="button" disabled>
+        <span class="status-dot" id="statusDot"></span>
+        <span id="networkLabel">未连接</span>
+      </button>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="heroTitle">
+        <div class="hero-copy">
+          <p class="eyebrow">MOBILE WEB3 WALLET</p>
+          <h1 id="heroTitle">随身使用的<br /><em>链上口袋。</em></h1>
+          <p class="hero-description">连接手机钱包，查看余额，完成签名与原生代币转账。</p>
+          <div class="hero-actions">
+            <button class="primary-button" id="connectButton" type="button">连接钱包</button>
+            <a class="secondary-button hidden" id="walletBrowserLink" href="#" rel="noreferrer">在 MetaMask 中打开</a>
+          </div>
+          <p class="compatibility">支持 MetaMask、OKX Wallet、Trust Wallet 等注入式钱包</p>
+        </div>
+
+        <div class="wallet-shell" aria-live="polite">
+          <div class="wallet-head">
+            <span>资产概览</span>
+            <span class="wallet-state" id="walletState">离线</span>
+          </div>
+          <div class="balance-block">
+            <span class="balance-label">当前余额</span>
+            <div class="balance-line">
+              <strong id="balanceValue">0.0000</strong>
+              <span id="currencyLabel">ETH</span>
+            </div>
+            <button class="address-copy" id="copyAddressButton" type="button" disabled>
+              <span id="addressLabel">连接钱包后显示地址</span>
+              <span class="copy-label">复制</span>
+            </button>
+          </div>
+          <div class="quick-grid">
+            <button class="quick-action" id="signTabButton" type="button" disabled>
+              <span class="quick-index">01</span>
+              <span>签名验证</span>
+            </button>
+            <button class="quick-action" id="sendTabButton" type="button" disabled>
+              <span class="quick-index">02</span>
+              <span>发送代币</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="workspace" id="workspace" aria-labelledby="workspaceTitle">
+        <div class="workspace-heading">
+          <p class="eyebrow">ONCHAIN ACTIONS</p>
+          <h2 id="workspaceTitle">从连接到确认，<br />都在一个页面。</h2>
+        </div>
+
+        <div class="action-panel">
+          <div class="tabs" role="tablist" aria-label="链上操作">
+            <button class="tab active" id="signTab" role="tab" aria-selected="true" aria-controls="signPanel" type="button">消息签名</button>
+            <button class="tab" id="sendTab" role="tab" aria-selected="false" aria-controls="sendPanel" type="button">原生代币转账</button>
+          </div>
+
+          <div class="panel" id="signPanel" role="tabpanel" aria-labelledby="signTab">
+            <label for="messageInput">待签名消息</label>
+            <textarea id="messageInput" rows="4">我正在使用 ChainPocket 验证此钱包。</textarea>
+            <button class="panel-button" id="signButton" type="button" disabled>请求钱包签名</button>
+            <div class="result-box hidden" id="signatureResult">
+              <span>签名结果</span>
+              <code id="signatureValue"></code>
+            </div>
+          </div>
+
+          <form class="panel hidden" id="sendPanel" role="tabpanel" aria-labelledby="sendTab">
+            <label for="recipientInput">接收地址</label>
+            <input id="recipientInput" inputmode="text" autocomplete="off" placeholder="0x..." />
+            <label for="amountInput">发送数量</label>
+            <div class="amount-field">
+              <input id="amountInput" inputmode="decimal" autocomplete="off" placeholder="0.001" />
+              <span id="sendCurrencyLabel">ETH</span>
+            </div>
+            <p class="form-note">请先在测试网使用。交易发起后仍需在钱包内确认。</p>
+            <button class="panel-button" id="sendButton" type="submit" disabled>预览并发送</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="steps" aria-labelledby="stepsTitle">
+        <div>
+          <p class="eyebrow">BUILT FOR HANDPHONES</p>
+          <h2 id="stepsTitle">手机浏览器，<br />一样顺手。</h2>
+        </div>
+        <ol class="step-list">
+          <li><span>01</span><div><strong>打开钱包浏览器</strong><p>在钱包 App 内访问本站，或使用 MetaMask 快捷入口。</p></div></li>
+          <li><span>02</span><div><strong>授权当前账户</strong><p>连接请求仅获取公开地址，不会触碰私钥。</p></div></li>
+          <li><span>03</span><div><strong>确认链上操作</strong><p>每次签名和交易都由钱包弹窗进行最终确认。</p></div></li>
+        </ol>
+      </section>
+    </main>
+
+    <footer>
+      <a class="brand" href="#"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>ChainPocket</span></a>
+      <p>非托管工具。私钥始终保留在你的钱包中。</p>
+    </footer>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <dialog id="networkDialog">
+      <div class="dialog-head">
+        <div><p class="eyebrow">SELECT NETWORK</p><h3>切换网络</h3></div>
+        <button class="dialog-close" id="closeNetworkDialog" type="button" aria-label="关闭">关闭</button>
+      </div>
+      <div class="network-list" id="networkList"></div>
+    </dialog>
+
+    <dialog id="confirmDialog">
+      <div class="dialog-head">
+        <div><p class="eyebrow">CONFIRM TRANSFER</p><h3>确认交易信息</h3></div>
+        <button class="dialog-close" id="closeConfirmDialog" type="button" aria-label="关闭">关闭</button>
+      </div>
+      <dl class="confirm-list">
+        <div><dt>接收地址</dt><dd id="confirmRecipient"></dd></div>
+        <div><dt>发送数量</dt><dd id="confirmAmount"></dd></div>
+        <div><dt>当前网络</dt><dd id="confirmNetwork"></dd></div>
+      </dl>
+      <button class="panel-button" id="confirmSendButton" type="button">在钱包中确认</button>
+    </dialog>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
